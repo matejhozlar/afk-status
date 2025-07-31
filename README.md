@@ -1,25 +1,30 @@
+# AFKStatus
 
-Installation information
-=======
+**AFKStatus** is a lightweight Minecraft mod for **NeoForge 1.21.1** that adds a simple `/afk` command to let players mark themselves as AFK (Away From Keyboard).
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+## Features
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+* Adds `/afk` command to mark yourself as AFK.
+* Broadcasts a message to all players when someone goes AFK.
+* Useful for servers and cooperative worlds to let others know you're away.
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+## Getting Started
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
+To use this mod:
 
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+1. Install Minecraft **1.21.1** with the **NeoForge** mod loader.
+2. Drop the built `AFKStatus-x.x.x.jar` into your `mods/` folder.
+3. Launch the game and type `/afk` in the chat!
+
+## Build from Source
+
+Clone the repo and run:
+
+```bash
+./gradlew build
+```
+
+The final mod `.jar` will be in `build/libs/`.
+
+---
+
