@@ -1,0 +1,13 @@
+{
+  "itemGroup.afkstatus": "Example Mod Tab",
+  "block.afkstatus.example_block": "Example Block",
+  "item.afkstatus.example_item": "Example Item",
+
+  "afkstatus.configuration.title": "AFKStatus Configs",
+  "afkstatus.configuration.section.afkstatus.common.toml": "AFKStatus Configs",
+  "afkstatus.configuration.section.afkstatus.common.toml.title": "AFKStatus Configs",
+  "afkstatus.configuration.items": "Item List",
+  "afkstatus.configuration.logDirtBlock": "Log Dirt Block",
+  "afkstatus.configuration.magicNumberIntroduction": "Magic Number Text",
+  "afkstatus.configuration.magicNumber": "Magic Number"
+}
