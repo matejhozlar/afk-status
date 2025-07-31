@@ -8,19 +8,29 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.UUID;
+
 public class AFKCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal("afk")
                         .executes(context -> {
                             ServerPlayer player = context.getSource().getPlayer();
-                            boolean isAfk = AFKManager.isAFK(player.getUUID());
+                            UUID uuid = player.getUUID();
 
-                            AFKManager.setAFK(player.getUUID(), !isAfk);
-                            AFKStatus.applyAFKTag(player, !isAfk);
+                            boolean currentlyAFK = AFKManager.isAFK(uuid);
+                            boolean newAFK = !currentlyAFK;
 
-                            String name = player.getName().getString();
-                            String msg = name + (isAfk ? " is no longer AFK." : " is now AFK.");
+                            if (newAFK) {
+                                AFKManager.setAFK(uuid, true);
+                                AFKStatus.applyAFKTag(player, true);
+                            } else {
+                                AFKManager.updateActivity(uuid, player);
+                                AFKStatus.applyAFKTag(player, false);
+                            }
+
+                            String msg = player.getName().getString() +
+                                    (newAFK ? " is now AFK." : " is no longer AFK.");
 
                             player.getServer().getPlayerList().broadcastSystemMessage(
                                     Component.literal(msg), false
@@ -30,3 +40,5 @@ public class AFKCommand {
         );
     }
 }
+
+
