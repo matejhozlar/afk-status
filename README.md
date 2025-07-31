@@ -26,5 +26,4 @@ Clone the repo and run:
 
 The final mod `.jar` will be in `build/libs/`.
 
----
 
