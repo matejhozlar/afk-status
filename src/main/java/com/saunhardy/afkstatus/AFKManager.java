@@ -30,7 +30,7 @@ public class AFKManager {
             AFKStatus.applyAFKTag(player, false);
 
             String msg = player.getName().getString() + " is no longer AFK.";
-            player.getServer().getPlayerList().broadcastSystemMessage(
+            Objects.requireNonNull(player.getServer()).getPlayerList().broadcastSystemMessage(
                     net.minecraft.network.chat.Component.literal(msg), false
             );
         }
@@ -47,7 +47,7 @@ public class AFKManager {
                 AFKStatus.applyAFKTag(player, true);
 
                 String msg = player.getName().getString() + " is now AFK.";
-                player.getServer().getPlayerList().broadcastSystemMessage(
+                Objects.requireNonNull(player.getServer()).getPlayerList().broadcastSystemMessage(
                         net.minecraft.network.chat.Component.literal(msg), false
                 );
             }

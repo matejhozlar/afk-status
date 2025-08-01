@@ -1,6 +1,5 @@
 package com.saunhardy.afkstatus;
 
-import com.mojang.logging.LogUtils;
 import com.saunhardy.afkstatus.command.AFKCommand;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -9,35 +8,42 @@ import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.ServerChatEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Vec3i;
-import org.slf4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 @Mod(AFKStatus.MODID)
 public class AFKStatus {
     public static final String MODID = "afkstatus";
-    public static final Logger LOGGER = LogUtils.getLogger();
 
     private final Map<UUID, Vec3i> lastPositions = new HashMap<>();
 
-    public AFKStatus(IEventBus modBus, ModContainer container) {
+    public AFKStatus(IEventBus modBus) {
         NeoForge.EVENT_BUS.register(this);
         modBus.addListener(this::onInitialize);
     }
 
     private void onInitialize(FMLCommonSetupEvent ev) {
         // Setup if needed
+    }
+
+    @SubscribeEvent
+    public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            AFKManager.setAFK(player.getUUID(), false);
+            applyAFKTag(player, false); // Also remove AFK tag from scoreboard
+        }
     }
 
     @SubscribeEvent
@@ -73,7 +79,7 @@ public class AFKStatus {
     }
 
     public static void applyAFKTag(ServerPlayer player, boolean afk) {
-        Scoreboard scoreboard = player.getServer().getScoreboard();
+        Scoreboard scoreboard = Objects.requireNonNull(player.getServer()).getScoreboard();
         String teamName = "afkstatus";
 
         PlayerTeam team = scoreboard.getPlayerTeam(teamName);
