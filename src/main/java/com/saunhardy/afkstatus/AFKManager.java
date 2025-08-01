@@ -38,7 +38,6 @@ public class AFKManager {
         }
     }
 
-
     public static void checkAFKStatus(Collection<ServerPlayer> players) {
         long now = System.currentTimeMillis();
         for (ServerPlayer player : players) {
