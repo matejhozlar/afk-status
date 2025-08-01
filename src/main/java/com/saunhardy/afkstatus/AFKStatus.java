@@ -42,7 +42,7 @@ public class AFKStatus {
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             AFKManager.setAFK(player.getUUID(), false);
-            applyAFKTag(player, false); // Also remove AFK tag from scoreboard
+            applyAFKTag(player, false);
         }
     }
 
@@ -66,7 +66,7 @@ public class AFKStatus {
             Vec3i previous = lastPositions.get(uuid);
 
             if (previous == null || !previous.equals(current)) {
-                AFKManager.updateActivity(uuid, player); // 👈 updated
+                AFKManager.updateActivity(uuid, player);
                 lastPositions.put(uuid, current);
             }
         }
