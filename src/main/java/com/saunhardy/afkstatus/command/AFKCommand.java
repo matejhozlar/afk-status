@@ -26,17 +26,15 @@ public class AFKCommand {
                             if (newAFK) {
                                 AFKManager.setAFK(uuid, true);
                                 AFKStatus.applyAFKTag(player, true);
+
+                                String msg = player.getName().getString() + " is now AFK.";
+                                Objects.requireNonNull(player.getServer()).getPlayerList().broadcastSystemMessage(
+                                        Component.literal(msg), false
+                                );
                             } else {
                                 AFKManager.updateActivity(uuid, player);
-                                AFKStatus.applyAFKTag(player, false);
                             }
 
-                            String msg = player.getName().getString() +
-                                    (newAFK ? " is now AFK." : " is no longer AFK.");
-
-                            Objects.requireNonNull(player.getServer()).getPlayerList().broadcastSystemMessage(
-                                    Component.literal(msg), false
-                            );
                             return 1;
                         })
         );

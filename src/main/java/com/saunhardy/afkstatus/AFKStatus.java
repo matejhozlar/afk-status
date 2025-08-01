@@ -96,7 +96,9 @@ public class AFKStatus {
         if (afk) {
             scoreboard.addPlayerToTeam(player.getScoreboardName(), team);
         } else {
-            scoreboard.removePlayerFromTeam(player.getScoreboardName(), team);
+            if (team.getPlayers().contains(player.getScoreboardName())) {
+                scoreboard.removePlayerFromTeam(player.getScoreboardName(), team);
+            }
         }
     }
 }
