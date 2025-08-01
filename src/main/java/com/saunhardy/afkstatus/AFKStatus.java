@@ -8,7 +8,9 @@ import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -29,9 +31,10 @@ public class AFKStatus {
 
     private final Map<UUID, Vec3i> lastPositions = new HashMap<>();
 
-    public AFKStatus(IEventBus modBus) {
+    public AFKStatus(IEventBus modBus, ModContainer modContainer) {
         NeoForge.EVENT_BUS.register(this);
         modBus.addListener(this::onInitialize);
+        modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
     }
 
     private void onInitialize(FMLCommonSetupEvent ev) {

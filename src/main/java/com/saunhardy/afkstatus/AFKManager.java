@@ -7,7 +7,9 @@ import java.util.*;
 public class AFKManager {
     private static final Set<UUID> afkPlayers = new HashSet<>();
     private static final Map<UUID, Long> lastActivity = new HashMap<>();
-    private static final long AFK_TIMEOUT_MS = 10 * 1000; // 5 minutes
+    private static long getAfkTimeoutMs() {
+        return Config.AFK_TRIGGER_TIMER.get() * 60L * 1000L;
+    }
 
     public static void setAFK(UUID uuid, boolean afk) {
         if (afk) {
@@ -42,7 +44,7 @@ public class AFKManager {
         for (ServerPlayer player : players) {
             UUID uuid = player.getUUID();
             long last = lastActivity.getOrDefault(uuid, now);
-            if (!isAFK(uuid) && now - last >= AFK_TIMEOUT_MS) {
+            if (!isAFK(uuid) && now - last >= getAfkTimeoutMs()) {
                 setAFK(uuid, true);
                 AFKStatus.applyAFKTag(player, true);
 
