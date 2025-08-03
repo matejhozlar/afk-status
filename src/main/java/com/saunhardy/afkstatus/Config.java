@@ -17,6 +17,10 @@ public class Config {
             .comment("System messages (Player is now AFK., ...)")
             .define("systemMessages", true);
 
+    public static final ModConfigSpec.ConfigValue<Integer> CHECK_INTERVAL_TICKS = BUILDER
+            .comment("How often (in ticks) to check for AFK players (20 ticks = 1 second")
+            .defineInRange("checkIntervalTicks",20, 1, 1200);
+
     public static final ModConfigSpec.ConfigValue<String> MESSAGE_COLOR = BUILDER
             .comment("Color for AFK messages. Valid options: black, dark_blue, dark_green, dark_aqua, dark_red, dark_purple, gold, gray, dark_gray, blue, green, aqua, red, light_purple, yellow, white")
             .define("messageColor", "yellow");
