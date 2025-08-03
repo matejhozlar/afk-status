@@ -1,5 +1,10 @@
 # AFKStatus
 
+![Java](https://img.shields.io/badge/Language-Java-blue)
+![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-green)
+![ModLoader](https://img.shields.io/badge/Mod%20Loader-NeoForge-brightgreen)
+![ServerMod](https://img.shields.io/badge/Type-Server--Side-orange)
+
 **AFKStatus** is a lightweight, server-side mod for **Minecraft**, built on the **NeoForge** mod loader. It automatically tracks player activity and marks users as AFK (Away From Keyboard) when they stop moving or chatting for a configurable period. Players can also manually toggle AFK status using a simple `/afk` command.
 
 ### [AFKStatus on CurseForge](https://www.curseforge.com/minecraft/mc-mods/afkstatus)
