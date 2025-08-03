@@ -3,6 +3,7 @@ package com.saunhardy.afkstatus.command;
 import com.saunhardy.afkstatus.AFKManager;
 import com.saunhardy.afkstatus.AFKStatus;
 import com.mojang.brigadier.CommandDispatcher;
+import com.saunhardy.afkstatus.Config;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -27,10 +28,12 @@ public class AFKCommand {
                                 AFKManager.setAFK(uuid, true);
                                 AFKStatus.applyAFKTag(player, true);
 
-                                String msg = player.getName().getString() + " is now AFK.";
-                                Objects.requireNonNull(player.getServer()).getPlayerList().broadcastSystemMessage(
-                                        Component.literal(msg), false
-                                );
+                                if (Config.SYSTEM_MESSAGES.get()) {
+                                    String msg = player.getName().getString() + " is now AFK.";
+                                    Objects.requireNonNull(player.getServer()).getPlayerList().broadcastSystemMessage(
+                                            Component.literal(msg), false
+                                    );
+                                }
                             } else {
                                 AFKManager.updateActivity(uuid, player);
                             }

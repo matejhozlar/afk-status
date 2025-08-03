@@ -31,10 +31,12 @@ public class AFKManager {
             setAFK(uuid, false);
             AFKStatus.applyAFKTag(player, false);
 
-            String msg = player.getName().getString() + " is no longer AFK.";
-            Objects.requireNonNull(player.getServer()).getPlayerList().broadcastSystemMessage(
-                    net.minecraft.network.chat.Component.literal(msg), false
-            );
+            if (Config.SYSTEM_MESSAGES.get()) {
+                String msg = player.getName().getString() + " is no longer AFK.";
+                Objects.requireNonNull(player.getServer()).getPlayerList().broadcastSystemMessage(
+                        net.minecraft.network.chat.Component.literal(msg), false
+                );
+            }
         }
     }
 
@@ -47,10 +49,12 @@ public class AFKManager {
                 setAFK(uuid, true);
                 AFKStatus.applyAFKTag(player, true);
 
-                String msg = player.getName().getString() + " is now AFK.";
-                Objects.requireNonNull(player.getServer()).getPlayerList().broadcastSystemMessage(
-                        net.minecraft.network.chat.Component.literal(msg), false
-                );
+                if (Config.SYSTEM_MESSAGES.get()) {
+                    String msg = player.getName().getString() + " is now AFK.";
+                    Objects.requireNonNull(player.getServer()).getPlayerList().broadcastSystemMessage(
+                            net.minecraft.network.chat.Component.literal(msg), false
+                    );
+                }
             }
         }
     }
