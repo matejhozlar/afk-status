@@ -7,7 +7,6 @@
 
 <p align="center">
   <img src="docs/images/afkstatus-chat-preview.png" width="500">
-<img src="docs/images/afkstatus-tab-preview.png" width="500">
 </p>
 
 **AFKStatus** is a lightweight, server-side mod for **Minecraft**, built on the **NeoForge** mod loader. It automatically tracks player activity and marks users as AFK (Away From Keyboard) when they stop moving or chatting for a configurable period. Players can also manually toggle AFK status using a simple `/afk` command.
@@ -38,6 +37,10 @@
 
 - **Server-only**  
   No client-side installation required. Just drop the mod into your server's `mods/` folder.
+
+<p align="center">
+  <img src="docs/images/afkstatus-tab-preview.png" width="500">
+</p>
 
 ---
 
