@@ -70,6 +70,7 @@ public class AFKManager {
 
     public static void checkAFKStatus(Collection<ServerPlayer> players) {
         long now = System.currentTimeMillis();
+        List<ServerPlayer> toKick = new ArrayList<>();
 
         for (ServerPlayer player : players) {
             UUID uuid = player.getUUID();
@@ -89,7 +90,6 @@ public class AFKManager {
 
             int kickDelayMinutes = Config.AFK_KICK_TIMER.get();
             if (kickDelayMinutes > 0 && isAFK(uuid)) {
-                // Skip kick if blacklisted
                 if (isBlacklisted(player)) {
                     continue;
                 }
@@ -98,14 +98,18 @@ public class AFKManager {
                 long kickDelayMs = kickDelayMinutes * 60L * 1000L;
                 if (now - afkTime >= kickDelayMs) {
                     AFKStatus.applyAFKTag(player, false);
-
-                    player.connection.disconnect(net.minecraft.network.chat.Component.literal(
-                            "You were kicked for being AFK too long."
-                    ));
+                    toKick.add(player);
                 }
             }
         }
+
+        for (ServerPlayer player : toKick) {
+            player.connection.disconnect(net.minecraft.network.chat.Component.literal(
+                    "You were kicked for being AFK too long."
+            ));
+        }
     }
+
 
 
 }
