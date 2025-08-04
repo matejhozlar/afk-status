@@ -48,13 +48,14 @@
 
 After the first server launch, a configuration file (`afkstatus-server.toml`) is created in your `config/` directory.
 
-| Config Key           | Description                                                                 | Default | Range / Options            |
-|----------------------|-----------------------------------------------------------------------------|---------|-----------------------------|
-| `afkTriggerTimer`    | Minutes of inactivity before a player is marked AFK                         | `5`     | 1–60 minutes                |
-| `afkKickTimer`       | Minutes after being AFK before being kicked (set `0` to disable kicking)    | `0`     | 0–120 minutes               |
-| `systemMessages`     | Whether to broadcast AFK status changes                                     | `true`  | `true` / `false`            |
-| `checkIntervalTicks` | How often to check AFK status (20 ticks = 1 second)                         | `20`    | 1–1200 ticks                |
-| `messageColor`       | Message color (e.g., `gray`, `yellow`, `red`, etc.)                         | `yellow`| See full color list below   |
+| Config Key           | Description                                                              | Default | Range / Options           |
+|----------------------|--------------------------------------------------------------------------|---------|---------------------------|
+| `afkTriggerTimer`    | Minutes of inactivity before a player is marked AFK                      | `5`     | 1–60 minutes              |
+| `afkKickTimer`       | Minutes after being AFK before being kicked (set `0` to disable kicking) | `0`     | 0–120 minutes             |
+| `kickMessage`        | Kick message that is shown to the player once he is kicked               | `0`     | 0–120 minutes             |
+| `systemMessages`     | Whether to broadcast AFK status changes                                  | `true`  | `true` / `false`          |
+| `checkIntervalTicks` | How often to check AFK status (20 ticks = 1 second)                      | `20`    | 1–1200 ticks              |
+| `messageColor`       | Message color (e.g., `gray`, `yellow`, `red`, etc.)                      | `yellow`| See full color list below |
 
 **Valid colors:** `black`, `dark_blue`, `dark_green`, `dark_aqua`, `dark_red`, `dark_purple`, `gold`, `gray`, `dark_gray`, `blue`, `green`, `aqua`, `red`, `light_purple`, `yellow`, `white`
 
