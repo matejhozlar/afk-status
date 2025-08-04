@@ -36,6 +36,6 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add src/main/java/com/saunhardy/afkstatus
-            git commit -m "Sync afkstatus files from neoforge-1.21.1" || echo "No changes to commit"
+            git commit -m "AUTOMATED COMMIT FROM 1.21.1 — $(date -u +'%Y-%m-%d')" || echo "No changes to commit"
             git push origin $BRANCH
           done
