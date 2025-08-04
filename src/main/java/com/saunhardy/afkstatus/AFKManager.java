@@ -1,11 +1,13 @@
 package com.saunhardy.afkstatus;
 
+import com.saunhardy.afkstatus.storage.BlacklistStorage;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.ChatFormatting;
 
 import java.util.*;
 
 public class AFKManager {
+    private static final Set<String> blacklist = new HashSet<>();
     private static final Set<UUID> afkPlayers = new HashSet<>();
     private static final Map<UUID, Long> lastActivity = new HashMap<>();
     private static final Map<UUID, Long> afkStartTime = new HashMap<>();
@@ -17,10 +19,21 @@ public class AFKManager {
         try {
             return ChatFormatting.valueOf(Config.MESSAGE_COLOR.get().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            return ChatFormatting.YELLOW; // Fallback default
+            return ChatFormatting.YELLOW;
         }
     }
 
+    public static void reloadBlacklist() {
+        blacklist.clear();
+        List<String> fileList = BlacklistStorage.loadBlacklist();
+        fileList.forEach(entry -> blacklist.add(entry.toLowerCase()));
+    }
+
+    public static boolean isBlacklisted(ServerPlayer player) {
+        String lowerName = player.getName().getString().toLowerCase();
+        String uuidStr = player.getUUID().toString().toLowerCase();
+        return blacklist.contains(lowerName) || blacklist.contains(uuidStr);
+    }
 
     public static void setAFK(UUID uuid, boolean afk) {
         if (afk) {
@@ -53,6 +66,8 @@ public class AFKManager {
         }
     }
 
+
+
     public static void checkAFKStatus(Collection<ServerPlayer> players) {
         long now = System.currentTimeMillis();
 
@@ -74,9 +89,16 @@ public class AFKManager {
 
             int kickDelayMinutes = Config.AFK_KICK_TIMER.get();
             if (kickDelayMinutes > 0 && isAFK(uuid)) {
+                // Skip kick if blacklisted
+                if (isBlacklisted(player)) {
+                    continue;
+                }
+
                 long afkTime = afkStartTime.getOrDefault(uuid, now);
                 long kickDelayMs = kickDelayMinutes * 60L * 1000L;
                 if (now - afkTime >= kickDelayMs) {
+                    AFKStatus.applyAFKTag(player, false);
+
                     player.connection.disconnect(net.minecraft.network.chat.Component.literal(
                             "You were kicked for being AFK too long."
                     ));
@@ -84,5 +106,6 @@ public class AFKManager {
             }
         }
     }
+
 
 }

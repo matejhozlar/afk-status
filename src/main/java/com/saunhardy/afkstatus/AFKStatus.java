@@ -1,6 +1,7 @@
 package com.saunhardy.afkstatus;
 
 import com.saunhardy.afkstatus.command.AFKCommand;
+import com.saunhardy.afkstatus.storage.BlacklistStorage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,6 +20,8 @@ import net.neoforged.neoforge.event.ServerChatEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.minecraft.ChatFormatting;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +30,7 @@ import java.util.UUID;
 
 @Mod(AFKStatus.MODID)
 public class AFKStatus {
+    public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "afkstatus";
     private static PlayerTeam afkTeam = null;
 
@@ -36,6 +40,10 @@ public class AFKStatus {
         NeoForge.EVENT_BUS.register(this);
         modBus.addListener(this::onInitialize);
         modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
+
+        BlacklistStorage.ensureConfigFolder();
+
+        AFKManager.reloadBlacklist();
     }
 
     private void onInitialize(FMLCommonSetupEvent ev) {
