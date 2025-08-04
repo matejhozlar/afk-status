@@ -1,4 +1,5 @@
 name: Sync afkstatus Java files to other branches
+
 on:
   workflow_dispatch:
 
@@ -7,32 +8,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout main source branch (neoforge-1.21.1)
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           ref: neoforge-1.21.1
-          path: source
 
-      - name: Copy afkstatus files to temp directory
+      - name: Save afkstatus files
         run: |
-          mkdir -p afkstatus-copy
-          cp -r source/src/main/java/com/saunhardy/afkstatus afkstatus-copy/
+          mkdir -p temp-afkstatus
+          cp -r src/main/java/com/saunhardy/afkstatus temp-afkstatus/
 
       - name: Sync to target branches
         run: |
           for BRANCH in neoforge-1.21.{2..8}; do
             echo "Syncing to $BRANCH"
 
-            # Clone the branch
-            git fetch origin $BRANCH
             git switch $BRANCH
 
-            # Copy over files
             rm -rf src/main/java/com/saunhardy/afkstatus
             mkdir -p src/main/java/com/saunhardy
-            cp -r ../afkstatus-copy/afkstatus src/main/java/com/saunhardy/
+            cp -r temp-afkstatus/afkstatus src/main/java/com/saunhardy/
 
-            # Commit and push
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add src/main/java/com/saunhardy/afkstatus
