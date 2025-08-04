@@ -1,7 +1,7 @@
 # AFKStatus
 
 ![Java](https://img.shields.io/badge/Language-Java-blue)
-![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-green)
+![Minecraft](https://img.shields.io/badge/Minecraft-1.21.8-green)
 ![ModLoader](https://img.shields.io/badge/Mod%20Loader-NeoForge-brightgreen)
 ![ServerMod](https://img.shields.io/badge/Type-Server--Side-orange)
 
@@ -48,13 +48,14 @@
 
 After the first server launch, a configuration file (`afkstatus-server.toml`) is created in your `config/` directory.
 
-| Config Key           | Description                                                                 | Default | Range / Options            |
-|----------------------|-----------------------------------------------------------------------------|---------|-----------------------------|
-| `afkTriggerTimer`    | Minutes of inactivity before a player is marked AFK                         | `5`     | 1–60 minutes                |
-| `afkKickTimer`       | Minutes after being AFK before being kicked (set `0` to disable kicking)    | `0`     | 0–120 minutes               |
-| `systemMessages`     | Whether to broadcast AFK status changes                                     | `true`  | `true` / `false`            |
-| `checkIntervalTicks` | How often to check AFK status (20 ticks = 1 second)                         | `20`    | 1–1200 ticks                |
-| `messageColor`       | Message color (e.g., `gray`, `yellow`, `red`, etc.)                         | `yellow`| See full color list below   |
+| Config Key           | Description                                                              | Default | Range / Options           |
+|----------------------|--------------------------------------------------------------------------|---------|---------------------------|
+| `afkTriggerTimer`    | Minutes of inactivity before a player is marked AFK                      | `5`     | 1–60 minutes              |
+| `afkKickTimer`       | Minutes after being AFK before being kicked (set `0` to disable kicking) | `0`     | 0–120 minutes             |
+| `kickMessage`        | Kick message that is shown to the player once he is kicked               | `0`     | 0–120 minutes             |
+| `systemMessages`     | Whether to broadcast AFK status changes                                  | `true`  | `true` / `false`          |
+| `checkIntervalTicks` | How often to check AFK status (20 ticks = 1 second)                      | `20`    | 1–1200 ticks              |
+| `messageColor`       | Message color (e.g., `gray`, `yellow`, `red`, etc.)                      | `yellow`| See full color list below |
 
 **Valid colors:** `black`, `dark_blue`, `dark_green`, `dark_aqua`, `dark_red`, `dark_purple`, `gold`, `gray`, `dark_gray`, `blue`, `green`, `aqua`, `red`, `light_purple`, `yellow`, `white`
 
@@ -71,12 +72,51 @@ After the first server launch, a configuration file (`afkstatus-server.toml`) is
 
 ## Commands
 
-| Command | Description                                                                 |
-|---------|-----------------------------------------------------------------------------|
-| `/afk`  | Toggles your AFK status. Automatically broadcasts status changes to others. |
+| Command                 | Description                                                                                                                             |
+|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| `/afk`                  | Toggles your AFK status. Automatically broadcasts status changes to others.                                                             |
+| `/afk blacklist add`    | Adds a player to the AFK blacklist. Blacklisted players can go AFK but will not be kicked automatically. Requires operator permissions. |
+| `/afk blacklist remove` | Removes a player from the AFK blacklist. Requires operator permissions.                                                                 |
+| `/afk blacklist list`   | Lists all players currently on the AFK blacklist. Requires operator permissions.                                                        |
+| `/afk blacklist reload` | Reloads the blacklist from disk, useful if edited manually. Requires operator permissions.                                              |
 
-This lets players manually indicate they’re AFK or return without moving or chatting.
+> **Note:** The blacklist controls which players are exempt from being kicked for extended AFK, but blacklisted players will still be marked AFK normally.
 
+---
+
+## Blacklist feature
+
+AFKStatus includes a flexible blacklist system to exclude specific players from the automatic AFK kick functionality. This is useful for server staff, trusted players, or bots that need to remain connected despite inactivity.
+
+- **Storage:** Blacklist entries are saved as JSON file (`afk_blacklist.json`) inside `config/AFKStatus/` directory.
+- **Commands:** Admins can change the blacklist in-game using `/afk blacklist` subcommands.
+- **Behaviour:**
+  - Blacklisted players are tracked for AFK status and tagged normally.
+  - Blacklisted players will not be kicked for being AFK, regardless of the configured kick timer.
+
+To add a player to the blacklist, use:
+
+```bash
+/afk blacklist add <player>
+```
+
+To remove a player:
+
+```bash
+/afk blacklist remove <player>
+```
+
+To view the blacklist:
+
+```bash
+/afk blacklist list
+```
+
+To reload the blacklist from disk (after manual edits):
+
+```bash
+/afk blacklist reload
+```
 ---
 
 ## Scoreboard Integration
