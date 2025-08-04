@@ -1,7 +1,7 @@
 # AFKStatus
 
 ![Java](https://img.shields.io/badge/Language-Java-blue)
-![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-green)
+![Minecraft](https://img.shields.io/badge/Minecraft-1.21.6-green)
 ![ModLoader](https://img.shields.io/badge/Mod%20Loader-NeoForge-brightgreen)
 ![ServerMod](https://img.shields.io/badge/Type-Server--Side-orange)
 
