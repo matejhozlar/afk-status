@@ -6,6 +6,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.core.BlockPos;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -18,7 +19,6 @@ import net.neoforged.neoforge.event.ServerChatEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Vec3i;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,8 +28,9 @@ import java.util.UUID;
 @Mod(AFKStatus.MODID)
 public class AFKStatus {
     public static final String MODID = "afkstatus";
+    private static PlayerTeam afkTeam = null;
 
-    private final Map<UUID, Vec3i> lastPositions = new HashMap<>();
+    private final Map<UUID, BlockPos> lastPositions = new HashMap<>();
 
     public AFKStatus(IEventBus modBus, ModContainer modContainer) {
         NeoForge.EVENT_BUS.register(this);
@@ -44,7 +45,9 @@ public class AFKStatus {
     @SubscribeEvent
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            AFKManager.setAFK(player.getUUID(), false);
+            UUID uuid = player.getUUID();
+            lastPositions.remove(uuid);
+            AFKManager.setAFK(uuid, false);
             applyAFKTag(player, false);
         }
     }
@@ -59,14 +62,22 @@ public class AFKStatus {
         AFKManager.updateActivity(ev.getPlayer().getUUID(), ev.getPlayer());
     }
 
+    private int tickCounter = 0;
+
     @SubscribeEvent
     public void onServerTick(ServerTickEvent.Post ev) {
-        MinecraftServer server = ev.getServer();
+        tickCounter++;
+        int interval = Config.CHECK_INTERVAL_TICKS.get();
 
+        if (tickCounter % interval != 0) return;
+
+        tickCounter = 0;
+
+        MinecraftServer server = ev.getServer();
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             UUID uuid = player.getUUID();
-            Vec3i current = toVec3i(player.position());
-            Vec3i previous = lastPositions.get(uuid);
+            BlockPos current = player.blockPosition();
+            BlockPos previous = lastPositions.get(uuid);
 
             if (previous == null || !previous.equals(current)) {
                 AFKManager.updateActivity(uuid, player);
@@ -77,27 +88,25 @@ public class AFKStatus {
         AFKManager.checkAFKStatus(server.getPlayerList().getPlayers());
     }
 
-    private Vec3i toVec3i(net.minecraft.world.phys.Vec3 pos) {
-        return new Vec3i((int) pos.x, (int) pos.y, (int) pos.z);
-    }
-
     public static void applyAFKTag(ServerPlayer player, boolean afk) {
         Scoreboard scoreboard = Objects.requireNonNull(player.getServer()).getScoreboard();
-        String teamName = "afkstatus";
 
-        PlayerTeam team = scoreboard.getPlayerTeam(teamName);
-        if (team == null) {
-            team = scoreboard.addPlayerTeam(teamName);
-            team.setColor(ChatFormatting.GRAY);
-            team.setPlayerPrefix(Component.literal("[AFK] ")
-                    .withStyle(style -> style.withColor(ChatFormatting.GRAY)));
+        if (afkTeam == null) {
+            afkTeam = scoreboard.getPlayerTeam("afkstatus");
+            if (afkTeam == null) {
+                afkTeam = scoreboard.addPlayerTeam("afkstatus");
+                afkTeam.setColor(ChatFormatting.GRAY);
+                afkTeam.setPlayerPrefix(Component.literal("[AFK] ").withStyle(s -> s.withColor(ChatFormatting.GRAY)));
+            }
         }
 
         if (afk) {
-            scoreboard.addPlayerToTeam(player.getScoreboardName(), team);
+            if (!afkTeam.getPlayers().contains(player.getScoreboardName())) {
+                scoreboard.addPlayerToTeam(player.getScoreboardName(), afkTeam);
+            }
         } else {
-            if (team.getPlayers().contains(player.getScoreboardName())) {
-                scoreboard.removePlayerFromTeam(player.getScoreboardName(), team);
+            if (afkTeam.getPlayers().contains(player.getScoreboardName())) {
+                scoreboard.removePlayerFromTeam(player.getScoreboardName(), afkTeam);
             }
         }
     }
