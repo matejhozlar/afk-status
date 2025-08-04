@@ -13,6 +13,10 @@ public class Config {
             .comment("Time in minutes after a player is marked AFK before they are kicked (0 to disable)")
             .defineInRange("afkKickTimer", 0, 0, 120);
 
+    public static final ModConfigSpec.ConfigValue<String> KICK_MESSAGE = BUILDER
+            .comment("Kick message shown to players kicked for being AFK")
+            .define("kickMessage", "You were kicked for being AFK too long.");
+
     public static final ModConfigSpec.ConfigValue<Boolean> SYSTEM_MESSAGES = BUILDER
             .comment("System messages (Player is now AFK., ...)")
             .define("systemMessages", true);
