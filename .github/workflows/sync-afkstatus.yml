@@ -3,6 +3,9 @@ name: Sync afkstatus Java files to other branches
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   sync-afkstatus:
     runs-on: ubuntu-latest
