@@ -25,14 +25,15 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 @Mod(AFKStatus.MODID)
 public class AFKStatus {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "afkstatus";
-    private static PlayerTeam afkTeam = null;
+
+    // Volatile and synchronized for thread safety during lazy init
+    private static volatile PlayerTeam afkTeam = null;
 
     private final Map<UUID, BlockPos> lastPositions = new HashMap<>();
 
@@ -56,6 +57,7 @@ public class AFKStatus {
             UUID uuid = player.getUUID();
             lastPositions.remove(uuid);
             AFKManager.setAFK(uuid, false);
+            AFKManager.removePlayerData(uuid);  // Clear player-related AFK data
             applyAFKTag(player, false);
         }
     }
@@ -97,14 +99,19 @@ public class AFKStatus {
     }
 
     public static void applyAFKTag(ServerPlayer player, boolean afk) {
-        Scoreboard scoreboard = Objects.requireNonNull(player.getServer()).getScoreboard();
+        if (player.getServer() == null) return;
+        Scoreboard scoreboard = player.getServer().getScoreboard();
 
         if (afkTeam == null) {
-            afkTeam = scoreboard.getPlayerTeam("afkstatus");
-            if (afkTeam == null) {
-                afkTeam = scoreboard.addPlayerTeam("afkstatus");
-                afkTeam.setColor(ChatFormatting.GRAY);
-                afkTeam.setPlayerPrefix(Component.literal("[AFK] ").withStyle(s -> s.withColor(ChatFormatting.GRAY)));
+            synchronized (AFKStatus.class) {
+                if (afkTeam == null) {
+                    afkTeam = scoreboard.getPlayerTeam("afkstatus");
+                    if (afkTeam == null) {
+                        afkTeam = scoreboard.addPlayerTeam("afkstatus");
+                        afkTeam.setColor(ChatFormatting.GRAY);
+                        afkTeam.setPlayerPrefix(Component.literal("[AFK] ").withStyle(s -> s.withColor(ChatFormatting.GRAY)));
+                    }
+                }
             }
         }
 

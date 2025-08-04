@@ -16,18 +16,17 @@ import net.minecraft.commands.arguments.EntityArgument;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Locale;
 import java.util.UUID;
 
 public class AFKCommand {
     private static ChatFormatting getConfiguredColor() {
         try {
-            return ChatFormatting.valueOf(Config.MESSAGE_COLOR.get().toUpperCase(java.util.Locale.ROOT));
+            return ChatFormatting.valueOf(Config.MESSAGE_COLOR.get().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
             return ChatFormatting.YELLOW;
         }
     }
-
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
@@ -35,7 +34,10 @@ public class AFKCommand {
                         // Main /afk toggle command
                         .executes(context -> {
                             ServerPlayer player = context.getSource().getPlayer();
-                            assert player != null;
+                            if (player == null) {
+                                context.getSource().sendFailure(Component.literal("You must be a player to use this command."));
+                                return 0;
+                            }
                             UUID uuid = player.getUUID();
 
                             boolean currentlyAFK = AFKManager.isAFK(uuid);
@@ -47,9 +49,12 @@ public class AFKCommand {
 
                                 if (Config.SYSTEM_MESSAGES.get()) {
                                     String msg = player.getName().getString() + " is now AFK.";
-                                    Objects.requireNonNull(player.getServer()).getPlayerList().broadcastSystemMessage(
-                                            Component.literal(msg).withStyle(style -> style.withColor(getConfiguredColor())), false
-                                    );
+                                    var server = player.getServer();
+                                    if (server != null) {
+                                        server.getPlayerList().broadcastSystemMessage(
+                                                Component.literal(msg).withStyle(style -> style.withColor(getConfiguredColor())), false
+                                        );
+                                    }
                                 }
                             } else {
                                 AFKManager.updateActivity(uuid, player);
@@ -67,9 +72,14 @@ public class AFKCommand {
                                                 .executes(ctx -> {
                                                     ServerPlayer target = EntityArgument.getPlayer(ctx, "player");
                                                     String name = target.getName().getString();
-                                                    List<String> list = new ArrayList<>(BlacklistStorage.loadBlacklist());
+                                                    String nameLower = name.toLowerCase(Locale.ROOT);
 
-                                                    if (!list.contains(name)) {
+                                                    List<String> list = new ArrayList<>(BlacklistStorage.loadBlacklist());
+                                                    boolean alreadyBlacklisted = list.stream()
+                                                            .map(s -> s.toLowerCase(Locale.ROOT))
+                                                            .anyMatch(s -> s.equals(nameLower));
+
+                                                    if (!alreadyBlacklisted) {
                                                         list.add(name);
                                                         BlacklistStorage.saveBlacklist(list);
                                                         AFKManager.reloadBlacklist();
@@ -88,9 +98,13 @@ public class AFKCommand {
                                                 .executes(ctx -> {
                                                     ServerPlayer target = EntityArgument.getPlayer(ctx, "player");
                                                     String name = target.getName().getString();
-                                                    List<String> list = new ArrayList<>(BlacklistStorage.loadBlacklist());
+                                                    String nameLower = name.toLowerCase(Locale.ROOT);
 
-                                                    if (list.remove(name)) {
+                                                    List<String> list = new ArrayList<>(BlacklistStorage.loadBlacklist());
+                                                    // Remove ignoring case:
+                                                    boolean removed = list.removeIf(s -> s.equalsIgnoreCase(nameLower));
+
+                                                    if (removed) {
                                                         BlacklistStorage.saveBlacklist(list);
                                                         AFKManager.reloadBlacklist();
 
@@ -126,5 +140,3 @@ public class AFKCommand {
         );
     }
 }
-
-

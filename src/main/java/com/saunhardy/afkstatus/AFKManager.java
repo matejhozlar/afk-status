@@ -59,9 +59,12 @@ public class AFKManager {
 
             if (Config.SYSTEM_MESSAGES.get()) {
                 String msg = player.getName().getString() + " is no longer AFK.";
-                Objects.requireNonNull(player.getServer()).getPlayerList().broadcastSystemMessage(
-                        net.minecraft.network.chat.Component.literal(msg).withStyle(style -> style.withColor(getConfiguredColor())), false
-                );
+                var server = player.getServer();
+                if (server != null) {
+                    server.getPlayerList().broadcastSystemMessage(
+                            net.minecraft.network.chat.Component.literal(msg).withStyle(style -> style.withColor(getConfiguredColor())), false
+                    );
+                }
             }
         }
     }
@@ -82,9 +85,12 @@ public class AFKManager {
 
                 if (Config.SYSTEM_MESSAGES.get()) {
                     String msg = player.getName().getString() + " is now AFK.";
-                    Objects.requireNonNull(player.getServer()).getPlayerList().broadcastSystemMessage(
-                            net.minecraft.network.chat.Component.literal(msg).withStyle(style -> style.withColor(getConfiguredColor())), false
-                    );
+                    var server = player.getServer();
+                    if (server != null) {
+                        server.getPlayerList().broadcastSystemMessage(
+                                net.minecraft.network.chat.Component.literal(msg).withStyle(style -> style.withColor(getConfiguredColor())), false
+                        );
+                    }
                 }
             }
 
@@ -104,12 +110,15 @@ public class AFKManager {
         }
 
         for (ServerPlayer player : toKick) {
-            player.connection.disconnect(net.minecraft.network.chat.Component.literal(
-                    "You were kicked for being AFK too long."
-            ));
+            String kickMsg = Config.KICK_MESSAGE.get();
+            player.connection.disconnect(net.minecraft.network.chat.Component.literal(kickMsg));
         }
     }
 
-
+    public static void removePlayerData(UUID uuid) {
+        afkPlayers.remove(uuid);
+        lastActivity.remove(uuid);
+        afkStartTime.remove(uuid);
+    }
 
 }
