@@ -1,6 +1,7 @@
 package com.saunhardy.afkstatus;
 
 import com.saunhardy.afkstatus.command.AFKCommand;
+import com.saunhardy.afkstatus.storage.BlacklistStorage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,16 +20,20 @@ import net.neoforged.neoforge.event.ServerChatEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.minecraft.ChatFormatting;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 @Mod(AFKStatus.MODID)
 public class AFKStatus {
+    public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "afkstatus";
-    private static PlayerTeam afkTeam = null;
+
+    // Volatile and synchronized for thread safety during lazy init
+    private static volatile PlayerTeam afkTeam = null;
 
     private final Map<UUID, BlockPos> lastPositions = new HashMap<>();
 
@@ -36,6 +41,10 @@ public class AFKStatus {
         NeoForge.EVENT_BUS.register(this);
         modBus.addListener(this::onInitialize);
         modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
+
+        BlacklistStorage.ensureConfigFolder();
+
+        AFKManager.reloadBlacklist();
     }
 
     private void onInitialize(FMLCommonSetupEvent ev) {
@@ -48,6 +57,7 @@ public class AFKStatus {
             UUID uuid = player.getUUID();
             lastPositions.remove(uuid);
             AFKManager.setAFK(uuid, false);
+            AFKManager.removePlayerData(uuid);  // Clear player-related AFK data
             applyAFKTag(player, false);
         }
     }
@@ -89,14 +99,19 @@ public class AFKStatus {
     }
 
     public static void applyAFKTag(ServerPlayer player, boolean afk) {
-        Scoreboard scoreboard = Objects.requireNonNull(player.getServer()).getScoreboard();
+        if (player.getServer() == null) return;
+        Scoreboard scoreboard = player.getServer().getScoreboard();
 
         if (afkTeam == null) {
-            afkTeam = scoreboard.getPlayerTeam("afkstatus");
-            if (afkTeam == null) {
-                afkTeam = scoreboard.addPlayerTeam("afkstatus");
-                afkTeam.setColor(ChatFormatting.GRAY);
-                afkTeam.setPlayerPrefix(Component.literal("[AFK] ").withStyle(s -> s.withColor(ChatFormatting.GRAY)));
+            synchronized (AFKStatus.class) {
+                if (afkTeam == null) {
+                    afkTeam = scoreboard.getPlayerTeam("afkstatus");
+                    if (afkTeam == null) {
+                        afkTeam = scoreboard.addPlayerTeam("afkstatus");
+                        afkTeam.setColor(ChatFormatting.GRAY);
+                        afkTeam.setPlayerPrefix(Component.literal("[AFK] ").withStyle(s -> s.withColor(ChatFormatting.GRAY)));
+                    }
+                }
             }
         }
 
