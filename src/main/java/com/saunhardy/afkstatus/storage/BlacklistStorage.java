@@ -18,9 +18,6 @@ public class BlacklistStorage {
     private static final Path FOLDER = Paths.get("config", "AFKStatus");
     private static final Path FILE = FOLDER.resolve("afk_blacklist.json");
 
-    /**
-     * Ensure config folder exists.
-     */
     public static void ensureConfigFolder() {
         try {
             Files.createDirectories(FOLDER);
@@ -29,10 +26,6 @@ public class BlacklistStorage {
         }
     }
 
-    /**
-     * Loads the blacklist from JSON file.
-     * Returns empty list if file doesn't exist or on error.
-     */
     public static List<String> loadBlacklist() {
         try {
             if (Files.exists(FILE)) {
@@ -49,13 +42,9 @@ public class BlacklistStorage {
         return Collections.emptyList();
     }
 
-    /**
-     * Saves the blacklist to JSON file.
-     */
     public static void saveBlacklist(List<String> blacklist) {
         try {
             String json = GSON.toJson(blacklist);
-            // Folder creation assumed done already in ensureConfigFolder()
             Files.writeString(FILE, json, StandardCharsets.UTF_8);
         } catch (IOException e) {
             AFKStatus.LOGGER.error("Failed to save AFK blacklist to file", e);

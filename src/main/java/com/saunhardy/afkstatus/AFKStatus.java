@@ -32,7 +32,6 @@ public class AFKStatus {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "afkstatus";
 
-    // Volatile and synchronized for thread safety during lazy init
     private static volatile PlayerTeam afkTeam = null;
 
     private final Map<UUID, BlockPos> lastPositions = new HashMap<>();
@@ -47,9 +46,7 @@ public class AFKStatus {
         AFKManager.reloadBlacklist();
     }
 
-    private void onInitialize(FMLCommonSetupEvent ev) {
-        // Setup if needed
-    }
+    private void onInitialize(FMLCommonSetupEvent ev) {}
 
     @SubscribeEvent
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
@@ -57,7 +54,7 @@ public class AFKStatus {
             UUID uuid = player.getUUID();
             lastPositions.remove(uuid);
             AFKManager.setAFK(uuid, false);
-            AFKManager.removePlayerData(uuid);  // Clear player-related AFK data
+            AFKManager.removePlayerData(uuid);
             applyAFKTag(player, false);
         }
     }

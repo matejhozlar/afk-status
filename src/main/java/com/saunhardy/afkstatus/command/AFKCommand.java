@@ -31,7 +31,6 @@ public class AFKCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal("afk")
-                        // Main /afk toggle command
                         .executes(context -> {
                             ServerPlayer player = context.getSource().getPlayer();
                             if (player == null) {
@@ -63,7 +62,6 @@ public class AFKCommand {
                             return 1;
                         })
 
-                        // Subcommands under /afk blacklist ...
                         .then(Commands.literal("blacklist")
                                 .requires(source -> source.hasPermission(2))
 
@@ -101,7 +99,6 @@ public class AFKCommand {
                                                     String nameLower = name.toLowerCase(Locale.ROOT);
 
                                                     List<String> list = new ArrayList<>(BlacklistStorage.loadBlacklist());
-                                                    // Remove ignoring case:
                                                     boolean removed = list.removeIf(s -> s.equalsIgnoreCase(nameLower));
 
                                                     if (removed) {
