@@ -73,6 +73,17 @@ public class AFKStatus {
     }
 
     @SubscribeEvent
+    public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            UUID uuid = player.getUUID();
+            lastPositions.remove(uuid);
+            AFKManager.setAFK(uuid, false);
+            AFKManager.removePlayerData(uuid);
+            applyAFKTag(player, false);
+        }
+    }
+
+    @SubscribeEvent
     public void onRegister(final RegisterCommandsEvent ev) {
         AFKCommand.register(ev.getDispatcher());
     }
