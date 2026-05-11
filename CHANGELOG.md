@@ -1,7 +1,5 @@
-## Version 1.2.0
+## Version 1.1.0
 
 ### Added
-- Added Fabric 1.20.1 support; both Forge and Fabric jars are now available
-
-### Changed
-- Configuration file migrated to TOML format, renamed to `afkstatus-server.toml`; existing `afkstatus.properties` configs will need to be recreated in the new format
+- Added Fabric 1.21.1 support
+- Unified Forge, NeoForge, and Fabric into a single multi-loader project; all three jars are built from one source tree
