@@ -28,6 +28,9 @@ dependencies {
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
+
+    shadowBundle(implementation("com.electronwill.night-config:core:$rootProject.nightconfig_version")) { transitive = false }
+    shadowBundle(implementation("com.electronwill.night-config:toml:$rootProject.nightconfig_version")) { transitive = false }
 }
 
 processResources {
@@ -58,6 +61,8 @@ shadowJar {
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'
     mergeServiceFiles()
+
+    relocate("com.electronwill", "com.saunhardy.afkstatus.shadow.com.electronwill")
 }
 
 remapJar {

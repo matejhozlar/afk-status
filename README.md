@@ -49,7 +49,7 @@
 
 ## Configuration
 
-After the first server launch, a configuration file (`afkstatus.properties`) is created in your `config/` directory.
+After the first server launch, a configuration file (`afkstatus-server.toml`) is created in your `config/` directory.
 
 | Config Key                             | Description                                                              | Default                                       | Range / Options           |
 |----------------------------------------|--------------------------------------------------------------------------|-----------------------------------------------|---------------------------|

@@ -1,59 +1,16 @@
 package com.saunhardy.afkstatus;
 
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.saunhardy.afkstatus.platform.Services;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Properties;
 
 public final class Config {
     private Config() {}
 
-    private static final String FILE_NAME = "afkstatus.properties";
-    private static final String DEFAULTS = """
-            # AFKStatus configuration
-
-            # How long a player must be inactive before being marked AFK.
-            # Unit: minutes (1-60)
-            afk.triggerMinutes=5
-
-            # How long after being marked AFK a player is kicked.
-            # Set to 0 to disable kicking.
-            # Unit: minutes (0-120)
-            afk.kickMinutes=0
-
-            # How often the server checks for AFK changes.
-            # 20 ticks = ~1 second. Lower = more responsive, higher = less overhead.
-            # Range: 1-1200
-            afk.checkIntervalTicks=20
-
-            # If true, mouse look (camera rotation) counts as activity.
-            # Useful for builders who look around without moving.
-            detection.rotation.enabled=false
-
-            # Minimum change in yaw/pitch required to count as activity.
-            # Ignored if detection.rotation.enabled = false.
-            # Unit: degrees (1-45)
-            detection.rotation.thresholdDegrees=5
-
-            # If true, broadcast messages like "<name> is now AFK."
-            # and "<name> is no longer AFK."
-            messages.systemMessages=true
-
-            # Color for AFK messages.
-            # Valid: black, dark_blue, dark_green, dark_aqua, dark_red, dark_purple,
-            # gold, gray, dark_gray, blue, green, aqua, red, light_purple, yellow, white
-            messages.messageColor=yellow
-
-            # Message shown to players when kicked for being AFK.
-            messages.kickMessage=You were kicked for being AFK too long.
-
-            # If true, AFK players are excluded from the sleep vote.
-            # Non-AFK players can skip the night without waiting for AFK players.
-            sleep.bypassEnabled=true
-            """;
+    private static final String FILE_NAME = "afkstatus-server.toml";
 
     private static int afkTriggerMinutes = 5;
     private static int afkKickMinutes = 0;
@@ -78,46 +35,71 @@ public final class Config {
     public static void load() {
         Path file = Services.INSTANCE.getConfigDir().resolve(FILE_NAME);
         try {
-            if (!Files.exists(file)) {
-                Files.createDirectories(file.getParent());
-                Files.writeString(file, DEFAULTS, StandardCharsets.UTF_8);
-                AFKStatus.LOGGER.info("Wrote default AFKStatus config to {}", file);
-            }
-
-            Properties props = new Properties();
-            try (var in = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
-                props.load(in);
-            }
-
-            afkTriggerMinutes = clamp(parseInt(props, "afk.triggerMinutes", afkTriggerMinutes), 1, 60);
-            afkKickMinutes = clamp(parseInt(props, "afk.kickMinutes", afkKickMinutes), 0, 120);
-            checkIntervalTicks = clamp(parseInt(props, "afk.checkIntervalTicks", checkIntervalTicks), 1, 1200);
-            rotationEnabled = parseBool(props, "detection.rotation.enabled", rotationEnabled);
-            rotationThresholdDegrees = clamp(parseInt(props, "detection.rotation.thresholdDegrees", rotationThresholdDegrees), 1, 45);
-            systemMessages = parseBool(props, "messages.systemMessages", systemMessages);
-            messageColor = props.getProperty("messages.messageColor", messageColor);
-            kickMessage = props.getProperty("messages.kickMessage", kickMessage);
-            sleepBypassEnabled = parseBool(props, "sleep.bypassEnabled", sleepBypassEnabled);
+            Files.createDirectories(file.getParent());
         } catch (IOException e) {
-            AFKStatus.LOGGER.error("Failed to load AFKStatus config, using defaults", e);
+            AFKStatus.LOGGER.error("Failed to create AFKStatus config directory", e);
+            return;
         }
-    }
 
-    private static int parseInt(Properties props, String key, int fallback) {
-        String raw = props.getProperty(key);
-        if (raw == null) return fallback;
+        CommentedFileConfig config = CommentedFileConfig.builder(file)
+                .autosave()
+                .preserveInsertionOrder()
+                .sync()
+                .build();
         try {
-            return Integer.parseInt(raw.trim());
-        } catch (NumberFormatException e) {
-            AFKStatus.LOGGER.warn("Invalid integer for {} = '{}', using {}", key, raw, fallback);
-            return fallback;
-        }
-    }
+            config.load();
 
-    private static boolean parseBool(Properties props, String key, boolean fallback) {
-        String raw = props.getProperty(key);
-        if (raw == null) return fallback;
-        return Boolean.parseBoolean(raw.trim());
+            afkTriggerMinutes = clamp(config.getIntOrElse("afk.triggerMinutes", afkTriggerMinutes), 1, 60);
+            config.set("afk.triggerMinutes", afkTriggerMinutes);
+            config.setComment("afk.triggerMinutes",
+                    " How long a player must be inactive before being marked AFK.\n Unit: minutes (1-60)");
+
+            afkKickMinutes = clamp(config.getIntOrElse("afk.kickMinutes", afkKickMinutes), 0, 120);
+            config.set("afk.kickMinutes", afkKickMinutes);
+            config.setComment("afk.kickMinutes",
+                    " How long after being marked AFK a player is kicked.\n Set to 0 to disable kicking.\n Unit: minutes (0-120)");
+
+            checkIntervalTicks = clamp(config.getIntOrElse("afk.checkIntervalTicks", checkIntervalTicks), 1, 1200);
+            config.set("afk.checkIntervalTicks", checkIntervalTicks);
+            config.setComment("afk.checkIntervalTicks",
+                    " How often the server checks for AFK changes.\n 20 ticks = ~1 second. Lower = more responsive, higher = less overhead.\n Range: 1-1200");
+
+            rotationEnabled = config.getOrElse("detection.rotation.enabled", rotationEnabled);
+            config.set("detection.rotation.enabled", rotationEnabled);
+            config.setComment("detection.rotation.enabled",
+                    " If true, mouse look (camera rotation) counts as activity.\n Useful for builders who look around without moving.");
+
+            rotationThresholdDegrees = clamp(config.getIntOrElse("detection.rotation.thresholdDegrees", rotationThresholdDegrees), 1, 45);
+            config.set("detection.rotation.thresholdDegrees", rotationThresholdDegrees);
+            config.setComment("detection.rotation.thresholdDegrees",
+                    " Minimum change in yaw/pitch required to count as activity.\n Ignored if detection.rotation.enabled = false.\n Unit: degrees (1-45)");
+
+            systemMessages = config.getOrElse("messages.systemMessages", systemMessages);
+            config.set("messages.systemMessages", systemMessages);
+            config.setComment("messages.systemMessages",
+                    " If true, broadcast messages like \"<name> is now AFK.\"\n and \"<name> is no longer AFK.\"");
+
+            messageColor = config.getOrElse("messages.messageColor", messageColor);
+            config.set("messages.messageColor", messageColor);
+            config.setComment("messages.messageColor",
+                    " Color for AFK messages.\n Valid: black, dark_blue, dark_green, dark_aqua, dark_red, dark_purple,\n gold, gray, dark_gray, blue, green, aqua, red, light_purple, yellow, white");
+
+            kickMessage = config.getOrElse("messages.kickMessage", kickMessage);
+            config.set("messages.kickMessage", kickMessage);
+            config.setComment("messages.kickMessage",
+                    " Message shown to players when kicked for being AFK.");
+
+            sleepBypassEnabled = config.getOrElse("sleep.bypassEnabled", sleepBypassEnabled);
+            config.set("sleep.bypassEnabled", sleepBypassEnabled);
+            config.setComment("sleep.bypassEnabled",
+                    " If true, AFK players are excluded from the sleep vote.\n Non-AFK players can skip the night without waiting for AFK players.");
+
+            config.save();
+        } catch (Exception e) {
+            AFKStatus.LOGGER.error("Failed to load AFKStatus config; using defaults", e);
+        } finally {
+            config.close();
+        }
     }
 
     private static int clamp(int value, int min, int max) {
