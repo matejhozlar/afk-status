@@ -1,5 +1,4 @@
-## Version 1.1.0
+## Version 1.2.0
 
 ### Added
-- Added Fabric 1.21.1 support
-- Unified Forge, NeoForge, and Fabric into a single multi-loader project; all three jars are built from one source tree
+- Added Fabric 1.21.1 support; Forge, NeoForge, and Fabric jars are all now available
