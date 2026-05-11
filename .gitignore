@@ -12,7 +12,6 @@ out
 *.iws
 *.iml
 .idea
-.claude
 
 # gradle
 build
@@ -21,6 +20,6 @@ build
 # other
 eclipse
 run
-
-# Files from Forge MDK
-forge*changelog.txt
+runs
+run-data
+.architectury-transformer
