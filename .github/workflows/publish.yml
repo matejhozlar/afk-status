@@ -3,10 +3,6 @@ name: Publish to CurseForge
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Release'
-        required: true
-        type: string
       publish_forge:
         description: 'Publish Forge jar'
         required: true
@@ -24,6 +20,17 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Read mod version
+        id: mod_version
+        run: |
+          version=$(grep -E '^mod_version\s*=' gradle.properties | sed -E 's/^mod_version\s*=\s*//' | tr -d ' \r\n')
+          if [ -z "$version" ]; then
+            echo "::error::Could not read mod_version from gradle.properties"
+            exit 1
+          fi
+          echo "Resolved mod_version=$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -44,9 +51,9 @@ jobs:
         if: ${{ inputs.publish_forge }}
         uses: Kir-Antipov/mc-publish@v3.3
         with:
-          version: ${{ inputs.version }}
+          version: ${{ steps.mod_version.outputs.version }}
           version-type: release
-          name: "[${{ inputs.version }}] AFKStatus"
+          name: "[${{ steps.mod_version.outputs.version }}] AFKStatus"
           changelog-file: CHANGELOG.md
           loaders: forge
           game-versions: 1.20.1
@@ -60,9 +67,9 @@ jobs:
         if: ${{ inputs.publish_fabric }}
         uses: Kir-Antipov/mc-publish@v3.3
         with:
-          version: ${{ inputs.version }}
+          version: ${{ steps.mod_version.outputs.version }}
           version-type: release
-          name: "[${{ inputs.version }}] AFKStatus"
+          name: "[${{ steps.mod_version.outputs.version }}] AFKStatus"
           changelog-file: CHANGELOG.md
           loaders: fabric
           game-versions: 1.20.1
