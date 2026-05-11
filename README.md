@@ -1,7 +1,7 @@
 # AFKStatus
 
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1-green)
-![ModLoader](https://img.shields.io/badge/Mod%20Loader-Forge-brightgreen)
+![ModLoader](https://img.shields.io/badge/Mod%20Loader-Forge%20%7C%20Fabric-brightgreen)
 ![ServerMod](https://img.shields.io/badge/Type-Server--Side-orange)
 [![Downloads](https://img.shields.io/curseforge/dt/1318335?logo=curseforge&label=Downloads&color=F16436&labelColor=2D2D2D)](https://www.curseforge.com/projects/1318335)
 
@@ -9,7 +9,7 @@
   <img src="docs/images/afkstatus-chat-preview.png" width="500">
 </p>
 
-**AFKStatus** is a lightweight, server-side mod for **Minecraft**, built on the **Forge** mod loader. It automatically tracks player activity and marks users as AFK (Away From Keyboard) when they stop moving or chatting for a configurable period. Players can also manually toggle AFK status using a simple `/afk` command.
+**AFKStatus** is a lightweight, server-side mod for **Minecraft 1.20.1**, available for both **Forge** and **Fabric**. It automatically tracks player activity and marks users as AFK (Away From Keyboard) when they stop moving or chatting for a configurable period. Players can also manually toggle AFK status using a simple `/afk` command.
 
 ### [AFKStatus on CurseForge](https://www.curseforge.com/minecraft/mc-mods/afkstatus)
 
@@ -35,6 +35,9 @@
 - **Scoreboard integration**
   Uses Minecraft's team system to visually tag AFK players with `[AFK]`.
 
+- **Sleep bypass**
+  Excludes AFK players from the sleep vote so the rest of the server can skip the night without waiting.
+
 - **Server-only**
   No client-side installation required. Just drop the mod into your server's `mods/` folder.
 
@@ -46,18 +49,19 @@
 
 ## Configuration
 
-After the first server launch, a configuration file (`afkstatus-server.toml`) is created in your `config/` directory.
+After the first server launch, a configuration file (`afkstatus.properties`) is created in your `config/` directory.
 
-| Config Key           | Description                                                              | Default  | Range / Options           |
-|----------------------|--------------------------------------------------------------------------|----------|---------------------------|
-| `afkTriggerTimer`    | Minutes of inactivity before a player is marked AFK                      | `5`      | 1–60 minutes              |
-| `afkKickTimer`       | Minutes after being AFK before being kicked (set `0` to disable kicking) | `0`      | 0–120 minutes             |
-| `kickMessage`        | Kick message that is shown to the player once he is kicked               | `0`      | 0–120 minutes             |
-| `systemMessages`     | Whether to broadcast AFK status changes                                  | `true`   | `true` / `false`          |
-| `checkIntervalTicks` | How often to check AFK status (20 ticks = 1 second)                      | `20`     | 1–1200 ticks              |
-| `messageColor`       | Message color (e.g., `gray`, `yellow`, `red`, etc.)                      | `yellow` | See full color list below |
-| `detection.enabled`  | If true, mouse look (camera rotation) counts as activity                 | `false`  | `true` / `false`          |
-| `detection.degrees`  | Minimum change in yaw/pitch required to count as activity                | `5`      | 1-45 degrees              |
+| Config Key                             | Description                                                              | Default                                       | Range / Options           |
+|----------------------------------------|--------------------------------------------------------------------------|-----------------------------------------------|---------------------------|
+| `afk.triggerMinutes`                   | Minutes of inactivity before a player is marked AFK                      | `5`                                           | 1–60 minutes              |
+| `afk.kickMinutes`                      | Minutes after being AFK before being kicked (set `0` to disable kicking) | `0`                                           | 0–120 minutes             |
+| `afk.checkIntervalTicks`               | How often to check AFK status (20 ticks = 1 second)                      | `20`                                          | 1–1200 ticks              |
+| `detection.rotation.enabled`           | If true, mouse look (camera rotation) counts as activity                 | `false`                                       | `true` / `false`          |
+| `detection.rotation.thresholdDegrees`  | Minimum change in yaw/pitch required to count as activity                | `5`                                           | 1–45 degrees              |
+| `messages.systemMessages`              | Whether to broadcast AFK status changes                                  | `true`                                        | `true` / `false`          |
+| `messages.messageColor`                | Message color (e.g., `gray`, `yellow`, `red`, etc.)                      | `yellow`                                      | See full color list below |
+| `messages.kickMessage`                 | Message shown to a player when kicked for being AFK                      | `You were kicked for being AFK too long.`     | Any text                  |
+| `sleep.bypassEnabled`                  | If true, AFK players are excluded from the sleep vote                    | `true`                                        | `true` / `false`          |
 
 
 **Valid colors:** `black`, `dark_blue`, `dark_green`, `dark_aqua`, `dark_red`, `dark_purple`, `gold`, `gray`, `dark_gray`, `blue`, `green`, `aqua`, `red`, `light_purple`, `yellow`, `white`
@@ -137,8 +141,8 @@ Players are added/removed from this team as their status changes.
 
 ## Installation
 
-1. Install **Forge** on your Minecraft server.
-2. Place the **AFKStatus JAR** file into your server's `mods/` directory.
+1. Install your preferred mod loader (**Forge** or **Fabric**, including Fabric API for Fabric) on your Minecraft 1.20.1 server.
+2. Place the matching **AFKStatus JAR** (`afkstatus-forge-*.jar` or `afkstatus-fabric-*.jar`) into your server's `mods/` directory.
 3. Start or restart the server.
 
 ---
@@ -154,4 +158,4 @@ Players are added/removed from this team as their status changes.
 
 >## Acknowledgements
 > - Inspired by the need for simple and effective AFK tracking in multiplayer servers.
-> - Thanks to the Forge community for their tools and helpful examples.
+> - Thanks to the Forge and Fabric communities for their tools and helpful examples.
