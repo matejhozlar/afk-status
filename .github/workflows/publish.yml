@@ -7,6 +7,16 @@ on:
         description: 'Release'
         required: true
         type: string
+      publish_forge:
+        description: 'Publish Forge jar'
+        required: true
+        type: boolean
+        default: true
+      publish_fabric:
+        description: 'Publish Fabric jar'
+        required: true
+        type: boolean
+        default: true
 
 jobs:
   publish:
@@ -30,7 +40,8 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Publish to CurseForge
+      - name: Publish Forge to CurseForge
+        if: ${{ inputs.publish_forge }}
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           version: ${{ inputs.version }}
@@ -39,7 +50,23 @@ jobs:
           changelog-file: CHANGELOG.md
           loaders: forge
           game-versions: 1.20.1
-          files: build/libs/!(*-@(dev|sources|javadoc)).jar
+          files: forge/build/libs/!(*-@(dev|dev-shadow|sources|javadoc)).jar
+          java: 17
+
+          curseforge-id: 1318335
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+      - name: Publish Fabric to CurseForge
+        if: ${{ inputs.publish_fabric }}
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          version: ${{ inputs.version }}
+          version-type: release
+          name: "[${{ inputs.version }}] AFKStatus"
+          changelog-file: CHANGELOG.md
+          loaders: fabric
+          game-versions: 1.20.1
+          files: fabric/build/libs/!(*-@(dev|dev-shadow|sources|javadoc)).jar
           java: 17
 
           curseforge-id: 1318335
