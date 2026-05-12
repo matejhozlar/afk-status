@@ -1,4 +1,7 @@
-## Version 1.1.0
+## Version 1.2.0
 
 ### Added
-- Added Fabric 1.21.2 support; Fabric and NeoForge jars are now available
+- Added Minecraft 1.21.2 support; NeoForge and Fabric jars are now available
+
+### Changed
+- Configuration file migrated to TOML format, renamed to `afkstatus-server.toml`; existing `afkstatus.properties` configs will need to be recreated in the new format
