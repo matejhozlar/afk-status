@@ -66,7 +66,7 @@ public class AFKManager {
 
             if (Config.systemMessages()) {
                 String msg = player.getName().getString() + " is no longer AFK.";
-                var server = player.getServer();
+                var server = player.level().getServer();
                 if (server != null) {
                     server.getPlayerList().broadcastSystemMessage(
                             Component.literal(msg).withStyle(style -> style.withColor(getConfiguredColor())),
@@ -91,7 +91,7 @@ public class AFKManager {
 
                 if (Config.systemMessages()) {
                     String msg = player.getName().getString() + " is now AFK.";
-                    var server = player.getServer();
+                    var server = player.level().getServer();
                     if (server != null) {
                         server.getPlayerList().broadcastSystemMessage(
                                 Component.literal(msg).withStyle(style -> style.withColor(getConfiguredColor())),

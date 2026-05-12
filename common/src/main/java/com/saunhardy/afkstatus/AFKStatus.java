@@ -103,8 +103,9 @@ public final class AFKStatus {
     }
 
     public static void applyAFKTag(ServerPlayer player, boolean afk) {
-        if (player.getServer() == null) return;
-        Scoreboard scoreboard = player.getServer().getScoreboard();
+        MinecraftServer server = player.level().getServer();
+        if (server == null) return;
+        Scoreboard scoreboard = server.getScoreboard();
 
         if (afkTeam == null) {
             synchronized (AFKStatus.class) {

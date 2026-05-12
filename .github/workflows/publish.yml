@@ -61,7 +61,7 @@ jobs:
           name: "[${{ steps.mod_version.outputs.version }}] AFKStatus"
           changelog-file: CHANGELOG.md
           loaders: forge
-          game-versions: 1.21.8
+          game-versions: 1.21.9
           files: forge/build/libs/!(*-@(dev|dev-shadow|sources|javadoc)).jar
           java: 21
 
@@ -77,7 +77,7 @@ jobs:
           name: "[${{ steps.mod_version.outputs.version }}] AFKStatus"
           changelog-file: CHANGELOG.md
           loaders: neoforge
-          game-versions: 1.21.8
+          game-versions: 1.21.9
           files: neoforge/build/libs/!(*-@(dev|dev-shadow|sources|javadoc)).jar
           java: 21
 
@@ -93,7 +93,7 @@ jobs:
           name: "[${{ steps.mod_version.outputs.version }}] AFKStatus"
           changelog-file: CHANGELOG.md
           loaders: fabric
-          game-versions: 1.21.8
+          game-versions: 1.21.9
           files: fabric/build/libs/!(*-@(dev|dev-shadow|sources|javadoc)).jar
           java: 21
 
