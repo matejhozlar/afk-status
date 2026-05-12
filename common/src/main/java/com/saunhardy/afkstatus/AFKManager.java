@@ -50,7 +50,7 @@ public class AFKManager {
 
     public static void setAFK(ServerPlayer player, boolean afk) {
         setAFK(player.getUUID(), afk);
-        player.serverLevel().updateSleepingPlayerList();
+        player.level().updateSleepingPlayerList();
     }
 
     public static boolean isAFK(UUID uuid) {
