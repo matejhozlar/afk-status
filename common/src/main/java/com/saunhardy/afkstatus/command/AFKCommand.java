@@ -62,14 +62,15 @@ public class AFKCommand {
 
     private static void sendUsageLine(CommandSourceStack src, String command, String description, boolean suggestOnClick) {
         MutableComponent bullet = Component.literal(" • ").withStyle(s -> s.withColor(getConfiguredColor()));
+        ClickEvent click = suggestOnClick
+                ? new ClickEvent.SuggestCommand(command)
+                : new ClickEvent.CopyToClipboard(command);
+        HoverEvent hover = new HoverEvent.ShowText(
+                Component.literal(suggestOnClick ? "Click to paste" : "Click to copy"));
         MutableComponent cmd = Component.literal(command).setStyle(Style.EMPTY
                 .withColor(ChatFormatting.GOLD)
-                .withClickEvent(new ClickEvent(
-                        suggestOnClick ? ClickEvent.Action.SUGGEST_COMMAND : ClickEvent.Action.COPY_TO_CLIPBOARD,
-                        command))
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                        Component.literal(suggestOnClick ? "Click to paste" : "Click to copy")))
-        );
+                .withClickEvent(click)
+                .withHoverEvent(hover));
         MutableComponent desc = Component.literal(" – " + description).withStyle(s -> s.withColor(ChatFormatting.GRAY));
 
         src.sendSuccess(() -> bullet.copy().append(cmd).append(desc), false);
