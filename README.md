@@ -1,6 +1,6 @@
 # AFKStatus
 
-![Minecraft](https://img.shields.io/badge/Minecraft-1.21.6-green)
+![Minecraft](https://img.shields.io/badge/Minecraft-1.21.7-green)
 ![ModLoader](https://img.shields.io/badge/Mod%20Loader-NeoForge%20%7C%20Fabric-brightgreen)
 ![ServerMod](https://img.shields.io/badge/Type-Server--Side-orange)
 [![Downloads](https://img.shields.io/curseforge/dt/1318335?logo=curseforge&label=Downloads&color=F16436&labelColor=2D2D2D)](https://www.curseforge.com/projects/1318335)
@@ -9,7 +9,7 @@
   <img src="docs/images/afkstatus-chat-preview.png" width="500">
 </p>
 
-**AFKStatus** is a lightweight, server-side mod for **Minecraft 1.21.6**, available for **NeoForge** and **Fabric**. It automatically tracks player activity and marks users as AFK (Away From Keyboard) when they stop moving or chatting for a configurable period. Players can also manually toggle AFK status using a simple `/afk` command.
+**AFKStatus** is a lightweight, server-side mod for **Minecraft 1.21.7**, available for **NeoForge** and **Fabric**. It automatically tracks player activity and marks users as AFK (Away From Keyboard) when they stop moving or chatting for a configurable period. Players can also manually toggle AFK status using a simple `/afk` command.
 
 ### [AFKStatus on CurseForge](https://www.curseforge.com/minecraft/mc-mods/afkstatus)
 
@@ -141,7 +141,7 @@ Players are added/removed from this team as their status changes.
 
 ## Installation
 
-1. Install your preferred mod loader (**NeoForge** or **Fabric** with Fabric API) on your Minecraft 1.21.6 server.
+1. Install your preferred mod loader (**NeoForge** or **Fabric** with Fabric API) on your Minecraft 1.21.7 server.
 2. Place the matching **AFKStatus JAR** (`afkstatus-neoforge-*.jar` or `afkstatus-fabric-*.jar`) into your server's `mods/` directory.
 3. Start or restart the server.
 
