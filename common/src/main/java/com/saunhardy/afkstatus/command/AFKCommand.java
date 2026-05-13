@@ -12,6 +12,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.*;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class AFKCommand {
     }
 
     private static void sendHelp(CommandSourceStack src) {
-        boolean isOp = src.hasPermission(2);
+        boolean isOp = src.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
         ChatFormatting accent = getConfiguredColor();
 
         src.sendSuccess(() ->
@@ -119,7 +120,7 @@ public class AFKCommand {
                         )
 
                         .then(Commands.literal("blacklist")
-                                .requires(source -> source.hasPermission(2))
+                                .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
 
                                 .then(Commands.literal("add")
                                         .then(Commands.argument("player", EntityArgument.player())
