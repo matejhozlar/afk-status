@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "afkstatus-common-refmap.json",
   "mixins": [
+    "ServerPlayerStatsMixin",
     "SleepStatusMixin"
   ],
   "client": [],
