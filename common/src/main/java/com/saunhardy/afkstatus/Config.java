@@ -99,7 +99,7 @@ public final class Config {
             pausePlayTimeWhileAfk = config.getOrElse("stats.pausePlayTimeWhileAfk", pausePlayTimeWhileAfk);
             config.set("stats.pausePlayTimeWhileAfk", pausePlayTimeWhileAfk);
             config.setComment("stats.pausePlayTimeWhileAfk",
-                    " If true, the vanilla \"Time Played\" statistic (minecraft:play_time)\n does not increase while a player is AFK.");
+                    " If true, the vanilla \"Time Played\" statistic (minecraft:play_time)\n does not increase while a player is marked AFK.\n Time before afk.triggerMinutes elapses still counts.\n Scoreboard objectives using this statistic are paused too.");
 
             config.save();
         } catch (Exception e) {

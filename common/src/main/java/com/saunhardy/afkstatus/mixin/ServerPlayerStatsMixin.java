@@ -15,10 +15,13 @@ public class ServerPlayerStatsMixin {
 
     @Inject(method = "awardStat(Lnet/minecraft/stats/Stat;I)V", at = @At("HEAD"), cancellable = true)
     private void afkstatus$pausePlayTimeWhileAfk(Stat<?> stat, int amount, CallbackInfo ci) {
-        if (Config.pausePlayTimeWhileAfk()
-                && stat.getType() == Stats.CUSTOM
-                && Stats.PLAY_TIME.equals(stat.getValue())
-                && AFKManager.isAFK(((ServerPlayer) (Object) this).getUUID())) {
+        if (!Config.pausePlayTimeWhileAfk()
+                || stat.getType() != Stats.CUSTOM
+                || !Stats.PLAY_TIME.equals(stat.getValue())) {
+            return;
+        }
+        ServerPlayer player = (ServerPlayer) (Object) this;
+        if (AFKManager.isAFK(player.getUUID())) {
             ci.cancel();
         }
     }
