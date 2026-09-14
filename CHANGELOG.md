@@ -1,7 +1,4 @@
-## Version 1.2.0
+## Version 1.3.0
 
 ### Added
-- Added NeoForge 1.21.1 support; Fabric, Forge, and NeoForge jars are now available
-
-### Changed
-- Configuration file migrated to TOML format, renamed to `afkstatus-server.toml`; existing `afkstatus.properties` configs will need to be recreated in the new format
+- Added an option to pause the vanilla "Time Played" statistic while a player is AFK (`stats.pausePlayTimeWhileAfk`, disabled by default). Note: time before `afk.triggerMinutes` elapses still counts, and scoreboard objectives using `minecraft.custom:minecraft.play_time` are paused too.
