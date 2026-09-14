@@ -38,6 +38,9 @@
 - **Sleep bypass**
   Excludes AFK players from the sleep vote so the rest of the server can skip the night without waiting.
 
+- **Play time pause (optional)**
+  Stops the vanilla "Time Played" statistic from increasing while a player is AFK.
+
 - **Server-only**
   No client-side installation required. Just drop the mod into your server's `mods/` folder.
 
@@ -62,6 +65,7 @@ After the first server launch, a configuration file (`afkstatus-server.toml`) is
 | `messages.messageColor`                | Message color (e.g., `gray`, `yellow`, `red`, etc.)                      | `yellow`                                      | See full color list below |
 | `messages.kickMessage`                 | Message shown to a player when kicked for being AFK                      | `You were kicked for being AFK too long.`     | Any text                  |
 | `sleep.bypassEnabled`                  | If true, AFK players are excluded from the sleep vote                    | `true`                                        | `true` / `false`          |
+| `stats.pausePlayTimeWhileAfk`          | If true, the vanilla "Time Played" statistic stops increasing while AFK  | `false`                                       | `true` / `false`          |
 
 
 **Valid colors:** `black`, `dark_blue`, `dark_green`, `dark_aqua`, `dark_red`, `dark_purple`, `gold`, `gray`, `dark_gray`, `blue`, `green`, `aqua`, `red`, `light_purple`, `yellow`, `white`
