@@ -21,6 +21,7 @@ public final class Config {
     private static String messageColor = "yellow";
     private static String kickMessage = "You were kicked for being AFK too long.";
     private static boolean sleepBypassEnabled = true;
+    private static boolean pausePlayTimeWhileAfk = false;
 
     public static int afkTriggerMinutes() { return afkTriggerMinutes; }
     public static int afkKickMinutes() { return afkKickMinutes; }
@@ -31,6 +32,7 @@ public final class Config {
     public static String messageColor() { return messageColor; }
     public static String kickMessage() { return kickMessage; }
     public static boolean sleepBypassEnabled() { return sleepBypassEnabled; }
+    public static boolean pausePlayTimeWhileAfk() { return pausePlayTimeWhileAfk; }
 
     public static void load() {
         Path file = Services.INSTANCE.getConfigDir().resolve(FILE_NAME);
@@ -93,6 +95,11 @@ public final class Config {
             config.set("sleep.bypassEnabled", sleepBypassEnabled);
             config.setComment("sleep.bypassEnabled",
                     " If true, AFK players are excluded from the sleep vote.\n Non-AFK players can skip the night without waiting for AFK players.");
+
+            pausePlayTimeWhileAfk = config.getOrElse("stats.pausePlayTimeWhileAfk", pausePlayTimeWhileAfk);
+            config.set("stats.pausePlayTimeWhileAfk", pausePlayTimeWhileAfk);
+            config.setComment("stats.pausePlayTimeWhileAfk",
+                    " If true, the vanilla \"Time Played\" statistic (minecraft:play_time)\n does not increase while a player is marked AFK.\n Time before afk.triggerMinutes elapses still counts.\n Scoreboard objectives using this statistic are paused too.");
 
             config.save();
         } catch (Exception e) {
