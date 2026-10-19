@@ -2,6 +2,8 @@ package com.saunhardy.afkstatus.platform;
 
 import com.saunhardy.afkstatus.AFKStatus;
 
+import net.minecraft.server.level.ServerPlayer;
+
 import java.nio.file.Path;
 import java.util.ServiceLoader;
 
@@ -9,6 +11,8 @@ public interface Services {
     Services INSTANCE = load();
 
     Path getConfigDir();
+
+    boolean isFakePlayer(ServerPlayer player);
 
     private static Services load() {
         Services service = ServiceLoader.load(Services.class)
