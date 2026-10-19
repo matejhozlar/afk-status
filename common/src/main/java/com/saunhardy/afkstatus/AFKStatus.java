@@ -2,6 +2,7 @@ package com.saunhardy.afkstatus;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.saunhardy.afkstatus.command.AFKCommand;
+import com.saunhardy.afkstatus.platform.Services;
 import com.saunhardy.afkstatus.storage.BlacklistStorage;
 
 import net.minecraft.ChatFormatting;
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -76,7 +78,11 @@ public final class AFKStatus {
         float rotEps = (float) Config.rotationThresholdDegrees();
         boolean rotationEnabled = Config.rotationEnabled();
 
-        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+        List<ServerPlayer> players = server.getPlayerList().getPlayers().stream()
+                .filter(player -> !Services.INSTANCE.isFakePlayer(player))
+                .toList();
+
+        for (ServerPlayer player : players) {
             UUID uuid = player.getUUID();
             BlockPos current = player.blockPosition();
             BlockPos previous = lastPositions.get(uuid);
@@ -99,7 +105,7 @@ public final class AFKStatus {
             }
         }
 
-        AFKManager.checkAFKStatus(server.getPlayerList().getPlayers());
+        AFKManager.checkAFKStatus(players);
     }
 
     public static void applyAFKTag(ServerPlayer player, boolean afk) {
