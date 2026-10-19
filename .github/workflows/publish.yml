@@ -3,18 +3,8 @@ name: Publish to CurseForge
 on:
   workflow_dispatch:
     inputs:
-      publish_forge:
-        description: 'Publish Forge jar'
-        required: true
-        type: boolean
-        default: true
       publish_neoforge:
         description: 'Publish NeoForge jar'
-        required: true
-        type: boolean
-        default: true
-      publish_fabric:
-        description: 'Publish Fabric jar'
         required: true
         type: boolean
         default: true
@@ -41,7 +31,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '25'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
@@ -52,22 +42,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Publish Forge to CurseForge
-        if: ${{ inputs.publish_forge }}
-        uses: Kir-Antipov/mc-publish@v3.3
-        with:
-          version: ${{ steps.mod_version.outputs.version }}
-          version-type: release
-          name: "[${{ steps.mod_version.outputs.version }}] AFKStatus"
-          changelog-file: CHANGELOG.md
-          loaders: forge
-          game-versions: 1.21.11
-          files: forge/build/libs/!(*-@(dev|dev-shadow|sources|javadoc)).jar
-          java: 21
-
-          curseforge-id: 1318335
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
-
       - name: Publish NeoForge to CurseForge
         if: ${{ inputs.publish_neoforge }}
         uses: Kir-Antipov/mc-publish@v3.3
@@ -77,25 +51,10 @@ jobs:
           name: "[${{ steps.mod_version.outputs.version }}] AFKStatus"
           changelog-file: CHANGELOG.md
           loaders: neoforge
-          game-versions: 1.21.11
+          game-versions: 26.2
           files: neoforge/build/libs/!(*-@(dev|dev-shadow|sources|javadoc)).jar
-          java: 21
+          java: 25
 
           curseforge-id: 1318335
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
-      - name: Publish Fabric to CurseForge
-        if: ${{ inputs.publish_fabric }}
-        uses: Kir-Antipov/mc-publish@v3.3
-        with:
-          version: ${{ steps.mod_version.outputs.version }}
-          version-type: release
-          name: "[${{ steps.mod_version.outputs.version }}] AFKStatus"
-          changelog-file: CHANGELOG.md
-          loaders: fabric
-          game-versions: 1.21.11
-          files: fabric/build/libs/!(*-@(dev|dev-shadow|sources|javadoc)).jar
-          java: 21
-
-          curseforge-id: 1318335
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}

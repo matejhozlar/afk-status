@@ -13,6 +13,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.TeamColor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public final class AFKStatus {
@@ -119,7 +121,7 @@ public final class AFKStatus {
                     afkTeam = scoreboard.getPlayerTeam("afkstatus");
                     if (afkTeam == null) {
                         afkTeam = scoreboard.addPlayerTeam("afkstatus");
-                        afkTeam.setColor(ChatFormatting.GRAY);
+                        afkTeam.setColor(Optional.of(TeamColor.GRAY));
                         afkTeam.setPlayerPrefix(
                                 Component.literal("[AFK] ").withStyle(s -> s.withColor(ChatFormatting.GRAY))
                         );

@@ -1,4 +1,4 @@
 ## Version 1.3.1
 
-### Fixed
-- Fixed fake players (such as those spawned by other mods) being tracked for AFK status
+### Added
+- Added Minecraft 26.2 support; the NeoForge jar is now available
